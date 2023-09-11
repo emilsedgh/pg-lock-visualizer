@@ -1,79 +1,45 @@
 const pg = require('pg')
 const fs = require('fs')
-const graphviz = require('graphviz')
-const { sortBy } = require('lodash')
 
-const query = fs.readFileSync('./query.sql', 'UTF-8')
+const GET_LOCKS = fs.readFileSync('./query.sql', 'UTF-8')
+const SAVE_LOCKS = fs.readFileSync('./save.sql', 'UTF-8')
 
-const getLocks = async () => {
-	const db = new pg.Client({
-		connectionString: process.env.DATABASE_URL,
-		ssl: {
-			rejectUnauthorized: false
-		}
+const wait = ms => new Promise(resolve => setTimeout(resolve, ms))
 
-	})
-	await db.connect()
-
-	const { rows } = await db.query(query)
+const getLocks = async db => {
+	const { rows } = await db.query(GET_LOCKS)
 	return rows
 }
 
-const draw = async locks => {
-	const graph = graphviz.digraph('G')
+const getConnection = async connectionString => {
+  console.log(connectionString)
 
-	const nodes = {}
-
-	const getNode = id => {
-		if (nodes[id])
-			return nodes[id]
-
-		const node = graph.addNode(id)
-		node.blocked = 0
-		node.blocking = 0
-		node.set('style', 'filled')
-		nodes[id] = node
-		return node
-	}
-
-
-	for(const locked of locks) {
-		const blocked = getNode(locked.blocked_pid)
-		const blocking = getNode(locked.blocking_pid)
-
-		blocked.blocked++
-		blocking.blocking++
-
-		graph.addEdge(blocked, blocking)
-	}
-
-	const sorted = sortBy(Object.values(nodes), 'blocking')
-	const worst = sorted[sorted.length - 1]
-
-	if (worst) {
-		worst.set('bgcolor', 'red')
-		worst.set('color', 'red')
-		worst.set('center', true)
-	}
-
-	Object.values(nodes).forEach(node => {
-		node.set('xlabel', `${node.blocking}, ${node.blocked}`)
-		if (node.blocked === 0)
-			node.set('color', 'green')
-	})
-
-
-	return new Promise((resolve, reject) => {
-		const callback = buffer => {
-			fs.promises.writeFile(process.argv[2], buffer).then(resolve).catch(reject)
+	const db = new pg.Client({
+		connectionString,
+		ssl: {
+			rejectUnauthorized: false
 		}
-		graph.output('png', callback, reject)
 	})
+	await db.connect()
+  return db
+}
+
+const save = async (db, locks) => {
+	const { rows } = await db.query(SAVE_LOCKS, [JSON.stringify(locks)])
+  for(const row of rows)
+    console.log('Released', row.id)
 }
 
 const run = async() => {
-	const locks = await getLocks()
-	await draw(locks)
+  const target = await getConnection(process.env.TARGET_DATABASE_URL)
+  const storage = await getConnection(process.env.STORAGE_DATABASE_URL)
+
+  while(true) {
+    const locks = await getLocks(target)
+    await save(storage, locks)
+
+    await wait(1000)
+  }
 }
 
 run().then(() => {
