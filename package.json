@@ -9,8 +9,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "graphviz": "0.0.9",
-    "lodash": "^4.17.21",
     "pg": "^8.7.1"
   }
 }
