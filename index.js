@@ -12,8 +12,6 @@ const getLocks = async db => {
 }
 
 const getConnection = async connectionString => {
-  console.log(connectionString)
-
 	const db = new pg.Client({
 		connectionString,
 		ssl: {
