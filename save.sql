@@ -1,9 +1,5 @@
-WITH to_save AS (
+WITH locks AS (
     SELECT 
-        md5($1::text)::uuid as id,
-        NOW(), 
-        unblocked_at, 
-
         blocked_pid, 
         blocked_user, 
         blocked_statement, 
@@ -17,8 +13,38 @@ WITH to_save AS (
     FROM JSONB_POPULATE_RECORDSET(null::locks, $1::jsonb)
 ),
 
+to_save AS (
+    SELECT 
+        md5(TO_JSONB(locks.*)::text)::uuid as id,
+        NOW() as created_at, 
+        blocked_pid, 
+        blocked_user, 
+        blocked_statement, 
+        blocked_application, 
+
+        blocking_pid, 
+        blocking_user, 
+        blocking_statement, 
+        blocking_application,
+        blocking_query_start
+    FROM locks
+),
+
 saved AS (
-    INSERT INTO locks
+    INSERT INTO locks (
+        id,
+        created_at,
+        blocked_pid, 
+        blocked_user, 
+        blocked_statement, 
+        blocked_application, 
+
+        blocking_pid, 
+        blocking_user, 
+        blocking_statement, 
+        blocking_application,
+        blocking_query_start
+    )
     SELECT * FROM to_save
     ON CONFLICT(id) DO NOTHING
     RETURNING id

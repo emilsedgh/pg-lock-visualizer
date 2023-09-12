@@ -11,5 +11,5 @@ CREATE TABLE locks (
     blocking_user text, 
     blocking_statement text, 
     blocking_application text,
-    blocking_query_start
+    blocking_query_start timestamp
 );
