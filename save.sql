@@ -1,4 +1,4 @@
-WITH locks AS (
+WITH input AS (
     SELECT 
         blocked_pid, 
         blocked_user, 
@@ -15,8 +15,9 @@ WITH locks AS (
 
 to_save AS (
     SELECT 
-        md5(TO_JSONB(locks.*)::text)::uuid as id,
+        md5(TO_JSONB(input.*)::text)::uuid as id,
         NOW() as created_at, 
+        (SELECT MAX(position) + 1 FROM locks WHERE unblocked_at IS NULL) as position,
         blocked_pid, 
         blocked_user, 
         blocked_statement, 
@@ -27,13 +28,14 @@ to_save AS (
         blocking_statement, 
         blocking_application,
         blocking_query_start
-    FROM locks
+    FROM input
 ),
 
 saved AS (
     INSERT INTO locks (
         id,
         created_at,
+        position,
         blocked_pid, 
         blocked_user, 
         blocked_statement, 

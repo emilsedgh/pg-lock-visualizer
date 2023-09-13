@@ -2,6 +2,8 @@ CREATE TABLE locks (
     id uuid not null primary key, 
     created_at timestamp, 
     unblocked_at timestamp, 
+    position int,
+
     blocked_pid int, 
     blocked_user text, 
     blocked_statement text, 
