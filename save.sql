@@ -17,7 +17,7 @@ to_save AS (
     SELECT 
         md5(TO_JSONB(input.*)::text)::uuid as id,
         NOW() as created_at, 
-        (SELECT MAX(position) + 1 FROM locks WHERE unblocked_at IS NULL) as position,
+        (SELECT COALESCE(MAX(position) + 1, 1) FROM locks WHERE unblocked_at IS NULL) as position,
         blocked_pid, 
         blocked_user, 
         blocked_statement, 
