@@ -67,7 +67,7 @@ export default function draw(container, {fromTime, toTime, roots, setSelectedQue
       .attr("cy", d => y(d.total_block_count))
       .attr("r", 10)
       .attr("fill", "red")
-      .attr("opacity", "0.05")
+      .attr("opacity", d => "0.01" * d.total_block_count / 5)
       .on("click", (event, d) => {
         setSelectedQuery(d)
       })
