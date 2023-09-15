@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "npx forever index.js"
+    "start": "npx forever index.js",
+    "app": "cd app && npm run build && npx server -s build"
   },
   "author": "",
   "license": "ISC",
