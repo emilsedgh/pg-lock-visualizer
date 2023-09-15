@@ -58,8 +58,6 @@ export default function draw(container, {fromTime, toTime, roots, setSelectedQue
     const scaleOpacity = d3.scaleLinear().domain([0, maxChildren]).range([0.1, 1])
 
   svg.append("g")
-      .attr("stroke", "black")
-      .attr("stroke-width", 1)
     .selectAll("circle")
     .data(roots)
     .join("circle")
@@ -67,9 +65,9 @@ export default function draw(container, {fromTime, toTime, roots, setSelectedQue
         return x(dayjs.utc(d.started_at).toDate())
       })
       .attr("cy", d => y(d.total_block_count))
-      .attr("r", 3)
+      .attr("r", 10)
       .attr("fill", "red")
-      .attr("opacity", d => scaleOpacity(d.total_block_count))  
+      .attr("opacity", "0.05")
       .on("click", (event, d) => {
         setSelectedQuery(d)
       })
