@@ -1,2 +1,2 @@
-web: npx run app
-collect: npx forever index.js
+web: npm start
+collect: npm run collect
