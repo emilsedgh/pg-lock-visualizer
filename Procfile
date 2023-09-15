@@ -1,2 +1,2 @@
-web: sh -c 'cd app && npm start'
-collect: npm start
+web: npx forever --sourceDir ./app npm start
+collect: npx forever index.js
