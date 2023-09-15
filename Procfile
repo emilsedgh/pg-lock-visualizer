@@ -1,2 +1,2 @@
-web: sh -c 'cd app && npm run build && npx server -s build -l $PORT'
+web: sh -c 'cd app && npm start'
 collect: npm start
