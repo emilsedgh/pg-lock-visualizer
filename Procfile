@@ -1,2 +1,2 @@
-web: npx forever --sourceDir ./app npm start
+web: npx run app
 collect: npx forever index.js
