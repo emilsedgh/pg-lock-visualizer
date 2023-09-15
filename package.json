@@ -3,14 +3,29 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "dependencies": {
+    "@emotion/react": "latest",
+    "@emotion/styled": "latest",
+    "@mui/material": "latest",
+    "@mui/x-date-pickers": "^6.13.0",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "d3": "^7.8.5",
+    "dayjs": "^1.11.9",
+    "pg": "^8.11.3",
+    "react": "latest",
+    "react-dom": "latest",
+    "react-scripts": "latest",
+    "typescript": "latest",
+    "forever": "^4.0.3"
+  },
   "scripts": {
-    "start": "npx forever index.js",
-    "app": "cd app && npx run build && npx server -s build"
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "collect": "npx forever collector/index.js"
   },
   "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "forever": "^4.0.3",
-    "pg": "^8.7.1"
-  }
+  "license": "ISC"
 }

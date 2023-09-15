@@ -1,8 +1,8 @@
 const pg = require('pg')
 const fs = require('fs')
 
-const GET_LOCKS = fs.readFileSync('./query.sql', 'UTF-8')
-const SAVE_LOCKS = fs.readFileSync('./save.sql', 'UTF-8')
+const GET_LOCKS = fs.readFileSync(`${__dirname}/query.sql`, 'UTF-8')
+const SAVE_LOCKS = fs.readFileSync(`${__dirname}/save.sql`, 'UTF-8')
 
 const wait = ms => new Promise(resolve => setTimeout(resolve, ms))
 

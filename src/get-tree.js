@@ -55,7 +55,7 @@ export default function getTree(locks: Lock[]) {
         query.total_block_count = getTotals(query)
     }
 
-    const roots = Object.values(transactions)
+    const roots = Object.values(transactions).filter(q => children[q.application] !== undefined)
 
     return { roots, children, parents, queries: transactions }
 }
